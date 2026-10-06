@@ -1,0 +1,1355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chattal Football Club — Management & Matchday Hub</title>
+  
+  <!-- Google Fonts for Sports / Modern UI -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- html2canvas for 1-click WhatsApp Image Flyers -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+  <!-- Application Styles -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="theme-sport-dark">
+  <!-- Toast Notification Container -->
+  <div id="toastContainer" class="toast-container" aria-live="polite"></div>
+
+  <!-- App Wrapper -->
+  <div class="app-wrapper">
+    <!-- Sidebar Navigation -->
+    <aside class="app-sidebar" id="appSidebar">
+      <div class="sidebar-header">
+        <div class="club-branding">
+          <div class="club-crest-container" id="sidebarCrest">
+            <div class="crest-shield">
+              <i class="fa-solid fa-futbol crest-ball"></i>
+              <span class="crest-stars">★★★</span>
+            </div>
+          </div>
+          <div class="club-titles">
+            <h1 class="club-name" id="sidebarClubName">CHATTAL FC</h1>
+            <span class="club-tagline" id="sidebarClubMotto">Pride of Chattal Village</span>
+          </div>
+        </div>
+        <button class="btn-icon mobile-close-btn" id="closeSidebarBtn" aria-label="Close menu">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-section-title">MAIN MENU</div>
+        <button class="nav-item active" data-tab="dashboard">
+          <i class="fa-solid fa-chart-pie nav-icon"></i>
+          <span>Dashboard & Overview</span>
+        </button>
+        <button class="nav-item" data-tab="players">
+          <i class="fa-solid fa-users nav-icon"></i>
+          <span>Players & Squad</span>
+          <span class="nav-badge" id="navPlayerCount">0</span>
+        </button>
+        <button class="nav-item" data-tab="lineup">
+          <i class="fa-solid fa-diagram-project nav-icon"></i>
+          <span>Match Lineup (Pitch)</span>
+        </button>
+        <button class="nav-item" data-tab="fees">
+          <i class="fa-solid fa-wallet nav-icon"></i>
+          <span>Monthly Fees & Dues</span>
+          <span class="nav-badge badge-warning" id="navUnpaidCount">0</span>
+        </button>
+        <button class="nav-item" data-tab="whatsapp">
+          <i class="fa-brands fa-whatsapp nav-icon whatsapp-accent"></i>
+          <span>WhatsApp Studio</span>
+          <span class="nav-badge badge-new">Direct</span>
+        </button>
+        <button class="nav-item" data-tab="flyers">
+          <i class="fa-solid fa-image nav-icon"></i>
+          <span>Poster & Flyer Creator</span>
+        </button>
+        <button class="nav-item" data-tab="registration">
+          <i class="fa-solid fa-id-card nav-icon"></i>
+          <span>Player Self-Entry</span>
+          <span class="nav-badge badge-info" id="navPendingCount">0</span>
+        </button>
+        <button class="nav-item" data-tab="settings">
+          <i class="fa-solid fa-gear nav-icon"></i>
+          <span>Club Settings & Accounts</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="admin-profile-pill">
+          <div class="admin-avatar">
+            <i class="fa-solid fa-shield-halved"></i>
+          </div>
+          <div class="admin-info">
+            <span class="admin-name">Admin Portal</span>
+            <span class="admin-status"><span class="status-dot"></span> Offline-First Active</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="app-main">
+      <!-- Top Header Bar -->
+      <header class="app-topbar">
+        <div class="topbar-left">
+          <button class="btn-icon mobile-menu-toggle" id="openSidebarBtn" aria-label="Open Navigation">
+            <i class="fa-solid fa-bars-staggered"></i>
+          </button>
+          <div class="page-header-info">
+            <h2 class="current-page-title" id="pageTitle">Club Dashboard</h2>
+            <p class="current-page-subtitle" id="pageSubtitle">Real-time statistics, players, and matchday operations</p>
+          </div>
+        </div>
+
+        <div class="topbar-actions">
+          <div class="quick-links">
+            <button class="btn btn-outline-primary btn-sm" id="btnQuickMatchAlert">
+              <i class="fa-brands fa-whatsapp"></i> Quick Match Alert
+            </button>
+            <button class="btn btn-primary btn-sm" id="btnQuickAddPlayer">
+              <i class="fa-solid fa-user-plus"></i> Add Player
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <!-- Scrollable Tab Content Viewport -->
+      <div class="tab-viewport">
+        
+        <!-- ========================================== -->
+        <!-- TAB 1: DASHBOARD -->
+        <!-- ========================================== -->
+        <section class="tab-pane active" id="pane-dashboard">
+          <!-- Hero Match Banner -->
+          <div class="dashboard-hero-card" id="dashboardHeroBanner">
+            <div class="hero-content">
+              <div class="hero-badge"><i class="fa-solid fa-trophy"></i> NEXT FIXTURE ALERT</div>
+              <h3 class="hero-match-title" id="dashNextMatchTitle">Chattal FC vs Village Challengers</h3>
+              <p class="hero-match-details" id="dashNextMatchDetails">
+                <span><i class="fa-regular fa-calendar-days"></i> Upcoming Sunday • 4:30 PM</span>
+                <span><i class="fa-solid fa-location-dot"></i> Chattal Home Ground</span>
+              </p>
+              <div class="hero-action-buttons">
+                <button class="btn btn-whatsapp btn-sm" id="heroShareWhatsappBtn">
+                  <i class="fa-brands fa-whatsapp"></i> Broadcast to WhatsApp Group
+                </button>
+                <button class="btn btn-glass btn-sm" id="heroEditMatchBtn">
+                  <i class="fa-solid fa-pen-to-square"></i> Edit Fixture
+                </button>
+              </div>
+            </div>
+            <div class="hero-graphic">
+              <div class="versus-shield">
+                <div class="team-mini-crest">CFC</div>
+                <span class="vs-text">VS</span>
+                <div class="team-mini-crest away" id="heroAwayCrest">OPP</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- KPI Metric Cards Grid -->
+          <div class="kpi-grid">
+            <div class="kpi-card" data-card="players">
+              <div class="kpi-icon-wrap icon-green">
+                <i class="fa-solid fa-users"></i>
+              </div>
+              <div class="kpi-details">
+                <span class="kpi-label">Registered Squad</span>
+                <h3 class="kpi-value" id="kpiTotalPlayers">0</h3>
+                <span class="kpi-sub" id="kpiActivePlayers">0 Active Players</span>
+              </div>
+            </div>
+
+            <div class="kpi-card" data-card="fees-collected">
+              <div class="kpi-icon-wrap icon-emerald">
+                <i class="fa-solid fa-money-bill-wave"></i>
+              </div>
+              <div class="kpi-details">
+                <span class="kpi-label">Monthly Fees Collected</span>
+                <h3 class="kpi-value text-success" id="kpiFeesCollected">Rs. 0</h3>
+                <span class="kpi-sub" id="kpiPaidPlayersCount">0 Players Paid</span>
+              </div>
+            </div>
+
+            <div class="kpi-card" data-card="fees-pending">
+              <div class="kpi-icon-wrap icon-amber">
+                <i class="fa-solid fa-hand-holding-dollar"></i>
+              </div>
+              <div class="kpi-details">
+                <span class="kpi-label">Pending Dues (PKR)</span>
+                <h3 class="kpi-value text-warning" id="kpiFeesPending">Rs. 0</h3>
+                <span class="kpi-sub" id="kpiUnpaidPlayersCount">0 Players Pending</span>
+              </div>
+            </div>
+
+            <div class="kpi-card" data-card="approvals">
+              <div class="kpi-icon-wrap icon-blue">
+                <i class="fa-solid fa-user-clock"></i>
+              </div>
+              <div class="kpi-details">
+                <span class="kpi-label">Online Entries</span>
+                <h3 class="kpi-value text-info" id="kpiPendingApprovals">0</h3>
+                <span class="kpi-sub">Awaiting Verification</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dashboard Double Columns -->
+          <div class="dashboard-grid-2">
+            <!-- Left Column: Squad Quick View & Payment Summary -->
+            <div class="dash-card">
+              <div class="dash-card-header">
+                <div>
+                  <h4 class="dash-card-title"><i class="fa-solid fa-shield-halved"></i> Squad Positions Breakdown</h4>
+                  <p class="dash-card-subtitle">Distribution of players across the pitch</p>
+                </div>
+                <button class="btn btn-outline-light btn-xs" onclick="app.switchTab('players')">View All</button>
+              </div>
+              <div class="position-stats-grid" id="dashPositionStats">
+                <!-- Injected via JS -->
+              </div>
+              
+              <div class="online-payment-accounts-preview">
+                <div class="accounts-header">
+                  <span class="accounts-title"><i class="fa-solid fa-mobile-screen-button"></i> Official Club Payment Accounts</span>
+                  <button class="btn btn-link btn-xs" onclick="app.switchTab('settings')">Edit Info</button>
+                </div>
+                <div class="accounts-chips-row" id="dashAccountsPreview">
+                  <!-- Injected via JS -->
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Column: Quick WhatsApp Actions Hub -->
+            <div class="dash-card">
+              <div class="dash-card-header">
+                <div>
+                  <h4 class="dash-card-title"><i class="fa-brands fa-whatsapp text-whatsapp"></i> One-Tap WhatsApp Broadcasts</h4>
+                  <p class="dash-card-subtitle">Pre-formatted notices ready to send to village group</p>
+                </div>
+              </div>
+              <div class="whatsapp-quick-actions-list">
+                <div class="quick-broadcast-item" onclick="app.openQuickBroadcastModal('match')">
+                  <div class="qb-icon qb-match"><i class="fa-solid fa-futbol"></i></div>
+                  <div class="qb-text">
+                    <strong>Match Alert Notice (Home/Away)</strong>
+                    <span>Opponent, Date, Ground Location & Lineup</span>
+                  </div>
+                  <i class="fa-solid fa-chevron-right qb-arrow"></i>
+                </div>
+
+                <div class="quick-broadcast-item" onclick="app.openQuickBroadcastModal('fees')">
+                  <div class="qb-icon qb-fee"><i class="fa-solid fa-file-invoice-dollar"></i></div>
+                  <div class="qb-text">
+                    <strong>Unpaid Fee Reminder List</strong>
+                    <span>Polite breakdown of pending dues + JazzCash/EasyPaisa details</span>
+                  </div>
+                  <i class="fa-solid fa-chevron-right qb-arrow"></i>
+                </div>
+
+                <div class="quick-broadcast-item" onclick="app.openQuickBroadcastModal('practice')">
+                  <div class="qb-icon qb-practice"><i class="fa-solid fa-stopwatch"></i></div>
+                  <div class="qb-text">
+                    <strong>Practice / Meeting Announcement</strong>
+                    <span>Ground timings, kit reminder, training agenda</span>
+                  </div>
+                  <i class="fa-solid fa-chevron-right qb-arrow"></i>
+                </div>
+
+                <div class="quick-broadcast-item" onclick="app.switchTab('flyers')">
+                  <div class="qb-icon qb-flyer"><i class="fa-solid fa-file-image"></i></div>
+                  <div class="qb-text">
+                    <strong>Generate WhatsApp Matchday Poster</strong>
+                    <span>Download image poster to share on WhatsApp Status</span>
+                  </div>
+                  <i class="fa-solid fa-chevron-right qb-arrow"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- TAB 2: PLAYERS & SQUAD MANAGEMENT -->
+        <!-- ========================================== -->
+        <section class="tab-pane" id="pane-players">
+          <!-- Action & Filter Bar -->
+          <div class="section-toolbar">
+            <div class="search-and-filters">
+              <div class="search-input-wrapper">
+                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                <input type="text" id="playerSearchInput" placeholder="Search player by name, phone or jersey..." class="form-control">
+              </div>
+              <div class="filter-group">
+                <select id="filterPosition" class="form-select">
+                  <option value="ALL">All Positions</option>
+                  <option value="GK">Goalkeepers (GK)</option>
+                  <option value="DEF">Defenders (DEF)</option>
+                  <option value="MID">Midfielders (MID)</option>
+                  <option value="FWD">Forwards (FWD)</option>
+                </select>
+                <select id="filterFeeStatus" class="form-select">
+                  <option value="ALL">All Fee Statuses</option>
+                  <option value="PAID">Paid Only (Rs.)</option>
+                  <option value="UNPAID">Unpaid / Dues Pending</option>
+                  <option value="PENDING">Pending Verification</option>
+                </select>
+                <select id="filterRole" class="form-select">
+                  <option value="ALL">All Roles</option>
+                  <option value="Captain">Captains</option>
+                  <option value="Vice-Captain">Vice-Captains</option>
+                  <option value="Player">Regular Players</option>
+                  <option value="Staff">Staff / Coaches</option>
+                </select>
+              </div>
+            </div>
+            <div class="toolbar-actions">
+              <button class="btn btn-outline-light btn-sm" id="btnExportPlayersCSV">
+                <i class="fa-solid fa-file-csv"></i> Export CSV
+              </button>
+              <button class="btn btn-primary btn-sm" id="btnOpenAddPlayerModal">
+                <i class="fa-solid fa-user-plus"></i> Add New Player
+              </button>
+            </div>
+          </div>
+
+          <!-- Pending Approvals Banner (if any) -->
+          <div id="pendingApprovalsContainer" class="pending-queue-box hidden">
+            <div class="queue-header">
+              <div class="queue-title">
+                <i class="fa-solid fa-bell text-warning"></i>
+                <span>Online Player Entries Awaiting Approval (<span id="pendingQueueCount">0</span>)</span>
+              </div>
+              <span class="queue-sub">Submitted via public registration link with JazzCash/EasyPaisa proof</span>
+            </div>
+            <div class="queue-list" id="pendingQueueList">
+              <!-- Injected dynamically -->
+            </div>
+          </div>
+
+          <!-- Players Table / Cards Container -->
+          <div class="table-container">
+            <div class="table-meta-bar">
+              <span id="playerTableSummary">Showing 0 players</span>
+              <div class="view-toggles">
+                <button class="btn-toggle active" id="viewModeTable" title="Table View"><i class="fa-solid fa-list"></i></button>
+                <button class="btn-toggle" id="viewModeGrid" title="Card Grid View"><i class="fa-solid fa-grip"></i></button>
+              </div>
+            </div>
+
+            <!-- Table View -->
+            <div class="table-responsive" id="playersTableView">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th style="width: 50px;">#</th>
+                    <th>Player</th>
+                    <th>Position</th>
+                    <th>WhatsApp Contact</th>
+                    <th>Role</th>
+                    <th>Monthly Fee</th>
+                    <th>Status</th>
+                    <th style="text-align: right; width: 150px;">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="playersTableBody">
+                  <!-- Dynamically populated -->
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Grid Card View -->
+            <div class="players-cards-grid hidden" id="playersCardsView">
+              <!-- Dynamically populated -->
+            </div>
+
+            <!-- Empty State -->
+            <div class="empty-state hidden" id="playersEmptyState">
+              <div class="empty-icon"><i class="fa-solid fa-users-slash"></i></div>
+              <h3>No Players Found</h3>
+              <p>No players matched your search or filter criteria. Add a new player to get started!</p>
+              <button class="btn btn-primary" onclick="app.openPlayerModal()">Add First Player</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- TAB 3: MATCH LINEUP & TACTICAL PITCH -->
+        <!-- ========================================== -->
+        <section class="tab-pane" id="pane-lineup">
+          <div class="lineup-layout">
+            <!-- Left Side: Pitch Visualizer -->
+            <div class="lineup-pitch-column">
+              <div class="pitch-toolbar">
+                <div class="pitch-settings-row">
+                  <div class="setting-item">
+                    <label>Formation:</label>
+                    <select id="lineupFormationSelect" class="form-select form-select-sm">
+                      <option value="4-3-3">4-3-3 (Classic Attack)</option>
+                      <option value="4-4-2">4-4-2 (Balanced)</option>
+                      <option value="3-5-2">3-5-2 (Midfield Control)</option>
+                      <option value="4-2-3-1">4-2-3-1 (Modern)</option>
+                      <option value="7-a-side">7-A-Side (Village 2-3-1)</option>
+                    </select>
+                  </div>
+                  <div class="setting-item">
+                    <label>Match Type:</label>
+                    <input type="text" id="lineupMatchName" value="Chattal FC vs Village Challengers" class="form-control form-control-sm">
+                  </div>
+                </div>
+                <div class="pitch-actions-row">
+                  <button class="btn btn-whatsapp btn-sm" id="btnShareLineupWhatsapp">
+                    <i class="fa-brands fa-whatsapp"></i> Share Lineup to WhatsApp
+                  </button>
+                  <button class="btn btn-outline-light btn-sm" id="btnDownloadPitchImage">
+                    <i class="fa-solid fa-camera"></i> Download Pitch Image
+                  </button>
+                  <button class="btn btn-outline-danger btn-sm" id="btnClearLineup">
+                    <i class="fa-solid fa-rotate-left"></i> Reset
+                  </button>
+                </div>
+              </div>
+
+              <!-- Interactive Football Pitch Board -->
+              <div class="football-pitch-board" id="pitchBoardExport">
+                <div class="pitch-overlay-header">
+                  <div class="pitch-club-badge">
+                    <span class="pitch-club-name" id="pitchClubName">CHATTAL FC</span>
+                    <span class="pitch-match-label" id="pitchMatchLabel">Official Starting Squad</span>
+                  </div>
+                  <div class="pitch-formation-badge" id="pitchFormationLabel">4-3-3</div>
+                </div>
+
+                <div class="pitch-grass">
+                  <!-- Pitch Markings -->
+                  <div class="pitch-line pitch-halfway"></div>
+                  <div class="pitch-circle pitch-center-circle"></div>
+                  <div class="pitch-spot pitch-center-spot"></div>
+                  <div class="pitch-penalty-area pitch-top-penalty"></div>
+                  <div class="pitch-penalty-area pitch-bottom-penalty"></div>
+                  <div class="pitch-goal pitch-top-goal"></div>
+                  <div class="pitch-goal pitch-bottom-goal"></div>
+
+                  <!-- Dynamic Formation Slots on Pitch -->
+                  <div class="pitch-positions-layer" id="pitchPositionsLayer">
+                    <!-- Injected via JavaScript based on selected formation -->
+                  </div>
+                </div>
+
+                <div class="pitch-subs-bench">
+                  <span class="bench-title"><i class="fa-solid fa-chair"></i> Substitutes Bench:</span>
+                  <div class="bench-chips-container" id="pitchBenchList">
+                    <!-- Substitute chips injected -->
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Side: Player Selection Drawer -->
+            <div class="lineup-roster-column">
+              <div class="roster-card">
+                <div class="roster-header">
+                  <h4><i class="fa-solid fa-user-check"></i> Assign Players</h4>
+                  <span class="roster-hint">Click a player to place them in the squad</span>
+                </div>
+                <div class="roster-search">
+                  <input type="text" id="rosterSearchInput" placeholder="Filter squad list..." class="form-control form-control-sm">
+                </div>
+                <div class="roster-squad-list" id="lineupSquadSelectorList">
+                  <!-- Injected via JS -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- TAB 4: MONTHLY FEES & PAYMENT HUB -->
+        <!-- ========================================== -->
+        <section class="tab-pane" id="pane-fees">
+          <!-- Fee Top Overview -->
+          <div class="fee-hero-summary">
+            <div class="fee-month-selector">
+              <div class="selector-controls">
+                <button class="btn-icon" id="btnPrevMonth"><i class="fa-solid fa-chevron-left"></i></button>
+                <div class="current-month-display">
+                  <i class="fa-regular fa-calendar-check"></i>
+                  <span id="currentFeeMonthLabel">October 2026</span>
+                </div>
+                <button class="btn-icon" id="btnNextMonth"><i class="fa-solid fa-chevron-right"></i></button>
+              </div>
+              <div class="default-fee-config">
+                <span>Standard Monthly Fee:</span>
+                <strong id="displayDefaultFeeAmount">Rs. 500 / player</strong>
+                <button class="btn btn-link btn-xs" onclick="app.openFeeConfigModal()">Change</button>
+              </div>
+            </div>
+
+            <div class="fee-quick-stats-row">
+              <div class="fee-stat-badge stat-green">
+                <span class="stat-num" id="feesStatsCollected">Rs. 0</span>
+                <span class="stat-text">Total Collected</span>
+              </div>
+              <div class="fee-stat-badge stat-amber">
+                <span class="stat-num" id="feesStatsPending">Rs. 0</span>
+                <span class="stat-text">Pending Dues</span>
+              </div>
+              <div class="fee-stat-badge stat-blue">
+                <span class="stat-num" id="feesStatsPercentage">0%</span>
+                <span class="stat-text">Collection Rate</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Direct Payment Instructions Cards for Members -->
+          <div class="payment-methods-strip">
+            <div class="payment-card-pill jc-pill">
+              <div class="pm-logo"><i class="fa-solid fa-bolt"></i> JazzCash</div>
+              <div class="pm-info">
+                <span class="pm-title" id="pmJazzcashTitle">Chattal FC Official</span>
+                <span class="pm-number" id="pmJazzcashNumber">0300-1234567</span>
+              </div>
+              <button class="btn-copy-pm" onclick="app.copyPaymentDetails('JazzCash')"><i class="fa-regular fa-copy"></i> Copy</button>
+            </div>
+
+            <div class="payment-card-pill ep-pill">
+              <div class="pm-logo"><i class="fa-solid fa-mobile-retro"></i> EasyPaisa</div>
+              <div class="pm-info">
+                <span class="pm-title" id="pmEasypaisaTitle">Chattal FC Treasurer</span>
+                <span class="pm-number" id="pmEasypaisaNumber">0345-7654321</span>
+              </div>
+              <button class="btn-copy-pm" onclick="app.copyPaymentDetails('EasyPaisa')"><i class="fa-regular fa-copy"></i> Copy</button>
+            </div>
+
+            <div class="payment-card-pill bank-pill">
+              <div class="pm-logo"><i class="fa-solid fa-building-columns"></i> Bank Transfer</div>
+              <div class="pm-info">
+                <span class="pm-title" id="pmBankTitle">Habib Bank Ltd (HBL)</span>
+                <span class="pm-number" id="pmBankIban">PK00 HABB 0001 2345 6789 01</span>
+              </div>
+              <button class="btn-copy-pm" onclick="app.copyPaymentDetails('Bank')"><i class="fa-regular fa-copy"></i> Copy</button>
+            </div>
+          </div>
+
+          <!-- Fee Table Action Bar -->
+          <div class="section-toolbar">
+            <div class="search-and-filters">
+              <input type="text" id="feeSearchInput" placeholder="Filter player fee records..." class="form-control">
+              <select id="feeStatusFilter" class="form-select">
+                <option value="ALL">All Records</option>
+                <option value="PAID">Paid Only (🟢)</option>
+                <option value="UNPAID">Unpaid Only (🔴)</option>
+                <option value="PENDING">Pending Verification (🟡)</option>
+              </select>
+            </div>
+            <div class="toolbar-actions">
+              <button class="btn btn-whatsapp btn-sm" id="btnBroadcastUnpaidFees">
+                <i class="fa-brands fa-whatsapp"></i> Broadcast Unpaid Dues to WhatsApp
+              </button>
+              <button class="btn btn-outline-light btn-sm" id="btnExportFeeReport">
+                <i class="fa-solid fa-file-pdf"></i> Export Fee Statement
+              </button>
+            </div>
+          </div>
+
+          <!-- Fee Records Table -->
+          <div class="table-container">
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Player</th>
+                    <th>Contact</th>
+                    <th>Due Amount</th>
+                    <th>Payment Status</th>
+                    <th>Method</th>
+                    <th>Trx ID / Ref</th>
+                    <th>Date Paid</th>
+                    <th style="text-align: right; width: 220px;">Manage Payment</th>
+                  </tr>
+                </thead>
+                <tbody id="feeTableBody">
+                  <!-- Populated by JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- TAB 5: WHATSAPP BROADCAST STUDIO -->
+        <!-- ========================================== -->
+        <section class="tab-pane" id="pane-whatsapp">
+          <div class="whatsapp-studio-grid">
+            <!-- Left Side: Announcement Builder Form -->
+            <div class="wa-builder-card">
+              <div class="wa-builder-header">
+                <h3><i class="fa-brands fa-whatsapp text-whatsapp"></i> Create WhatsApp Announcement</h3>
+                <p>Select announcement template, customize details, and broadcast directly with 1 tap</p>
+              </div>
+
+              <div class="wa-template-tabs">
+                <button class="wa-tab-btn active" data-type="match"><i class="fa-solid fa-futbol"></i> Match Alert</button>
+                <button class="wa-tab-btn" data-type="fees"><i class="fa-solid fa-hand-holding-dollar"></i> Fee Reminder</button>
+                <button class="wa-tab-btn" data-type="practice"><i class="fa-solid fa-stopwatch"></i> Practice / Training</button>
+                <button class="wa-tab-btn" data-type="meeting"><i class="fa-solid fa-bullhorn"></i> Club Meeting</button>
+                <button class="wa-tab-btn" data-type="result"><i class="fa-solid fa-trophy"></i> Match Result</button>
+                <button class="wa-tab-btn" data-type="custom"><i class="fa-solid fa-pen-nib"></i> Custom Notice</button>
+              </div>
+
+              <!-- Form Fields (Dynamically adjusted based on selected type) -->
+              <div class="wa-form-container" id="waFormContainer">
+                <!-- Match Template Fields -->
+                <div class="wa-form-fields" id="waMatchFields">
+                  <div class="form-row-2">
+                    <div class="form-group">
+                      <label>Match Type / Ground:</label>
+                      <select id="waMatchType" class="form-select">
+                        <option value="HOME">🏟️ Home Match (Our Village Ground)</option>
+                        <option value="AWAY">🚌 Away Match (Opponent's Village)</option>
+                        <option value="TOURNAMENT">🏆 Tournament / Cup Match</option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label>Opponent Team Name:</label>
+                      <input type="text" id="waOpponentName" value="Taring Football Club" placeholder="e.g. Taring FC, Dhok FC" class="form-control">
+                    </div>
+                  </div>
+
+                  <div class="form-row-3">
+                    <div class="form-group">
+                      <label>Match Date:</label>
+                      <input type="date" id="waMatchDate" class="form-control">
+                    </div>
+                    <div class="form-group">
+                      <label>Kickoff Time:</label>
+                      <input type="time" id="waMatchTime" value="16:30" class="form-control">
+                    </div>
+                    <div class="form-group">
+                      <label>Reporting Time:</label>
+                      <input type="time" id="waReportingTime" value="15:45" class="form-control">
+                    </div>
+                  </div>
+
+                  <div class="form-row-2">
+                    <div class="form-group">
+                      <label>Ground / Venue Location:</label>
+                      <input type="text" id="waVenue" value="Chattal Main Sports Ground" class="form-control">
+                    </div>
+                    <div class="form-group">
+                      <label>Kit / Jersey Color:</label>
+                      <input type="text" id="waKitColor" value="Emerald Green & White" class="form-control">
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label class="checkbox-label">
+                      <input type="checkbox" id="waIncludeSquadCheckbox" checked>
+                      <span>Include selected matchday squad in announcement message</span>
+                    </label>
+                  </div>
+
+                  <div class="form-group">
+                    <label>Additional Notes / Instructions:</label>
+                    <textarea id="waMatchNotes" class="form-control" rows="2" placeholder="e.g. All players must bring their boots and shin guards. Punctuality is strictly required."></textarea>
+                  </div>
+                </div>
+
+                <!-- Fees Reminder Template Fields -->
+                <div class="wa-form-fields hidden" id="waFeesFields">
+                  <div class="form-group">
+                    <label>Month:</label>
+                    <input type="text" id="waFeeMonth" value="October 2026" class="form-control">
+                  </div>
+                  <div class="form-group">
+                    <label class="checkbox-label">
+                      <input type="checkbox" id="waIncludeAccountDetails" checked>
+                      <span>Include official JazzCash & EasyPaisa transfer details</span>
+                    </label>
+                  </div>
+                  <div class="form-group">
+                    <label>Custom Message Note:</label>
+                    <textarea id="waFeeNote" class="form-control" rows="2" placeholder="Please clear your monthly membership dues by the 10th of this month to support club kits and ground maintenance."></textarea>
+                  </div>
+                </div>
+
+                <!-- Practice / Meeting Fields -->
+                <div class="wa-form-fields hidden" id="waGeneralFields">
+                  <div class="form-group">
+                    <label>Title / Agenda:</label>
+                    <input type="text" id="waGeneralTitle" value="Evening Practice & Fitness Session" class="form-control">
+                  </div>
+                  <div class="form-row-2">
+                    <div class="form-group">
+                      <label>Date & Time:</label>
+                      <input type="text" id="waGeneralDateTime" value="Tomorrow at 5:00 PM Sharp" class="form-control">
+                    </div>
+                    <div class="form-group">
+                      <label>Venue / Ground:</label>
+                      <input type="text" id="waGeneralVenue" value="Chattal Main Football Ground" class="form-control">
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label>Agenda / Description:</label>
+                    <textarea id="waGeneralDesc" class="form-control" rows="3" placeholder="Targeted tactical drills, passing practice, and penalty shootout practice. Attendance is compulsory for all registered players."></textarea>
+                  </div>
+                </div>
+
+                <!-- Match Result Fields -->
+                <div class="wa-form-fields hidden" id="waResultFields">
+                  <div class="form-row-2">
+                    <div class="form-group">
+                      <label>Chattal FC Goals:</label>
+                      <input type="number" id="waResultOurGoals" value="3" class="form-control">
+                    </div>
+                    <div class="form-group">
+                      <label>Opponent Goals:</label>
+                      <input type="number" id="waResultOppGoals" value="1" class="form-control">
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label>Opponent Name:</label>
+                    <input type="text" id="waResultOppName" value="Taring Football Club" class="form-control">
+                  </div>
+                  <div class="form-group">
+                    <label>Goal Scorers & Highlights:</label>
+                    <input type="text" id="waResultScorers" value="Ali (2), Hamza (1) • Clean sheet by GK Usman" class="form-control">
+                  </div>
+                  <div class="form-group">
+                    <label>Man of the Match:</label>
+                    <input type="text" id="waResultMotm" value="Ali Raza (Jersey #10)" class="form-control">
+                  </div>
+                </div>
+
+                <!-- Custom Notice -->
+                <div class="wa-form-fields hidden" id="waCustomFields">
+                  <div class="form-group">
+                    <label>Write Custom WhatsApp Message:</label>
+                    <textarea id="waCustomText" class="form-control" rows="5" placeholder="Type your customized message here with emojis..."></textarea>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Side: Live WhatsApp Message Preview -->
+            <div class="wa-preview-card">
+              <div class="wa-phone-frame">
+                <div class="wa-phone-topbar">
+                  <div class="wa-chat-header-info">
+                    <div class="wa-group-avatar">
+                      <i class="fa-solid fa-users"></i>
+                    </div>
+                    <div>
+                      <div class="wa-chat-name" id="waPreviewGroupTitle">Chattal FC Official (WhatsApp Group)</div>
+                      <div class="wa-chat-sub">2 admins, all village players</div>
+                    </div>
+                  </div>
+                  <div class="wa-topbar-icons">
+                    <i class="fa-solid fa-video"></i>
+                    <i class="fa-solid fa-phone"></i>
+                    <i class="fa-solid fa-ellipsis-vertical"></i>
+                  </div>
+                </div>
+
+                <div class="wa-chat-body">
+                  <div class="wa-chat-bubble outgoing">
+                    <pre class="wa-message-text" id="waLiveMessagePreview">Generating formatted message...</pre>
+                    <span class="wa-timestamp">Just now <i class="fa-solid fa-check-double text-blue"></i></span>
+                  </div>
+                </div>
+
+                <div class="wa-action-bar">
+                  <button class="btn btn-whatsapp btn-block" id="btnSendWhatsappDirect">
+                    <i class="fa-brands fa-whatsapp"></i> Send to WhatsApp Group
+                  </button>
+                  <button class="btn btn-outline-light btn-block" id="btnCopyWhatsappText">
+                    <i class="fa-regular fa-copy"></i> Copy Message Text
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- TAB 6: POSTER & GRAPHICAL FLYER CREATOR -->
+        <!-- ========================================== -->
+        <section class="tab-pane" id="pane-flyers">
+          <div class="flyers-grid">
+            <!-- Left Side: Flyer Controls -->
+            <div class="flyer-controls-card">
+              <h3><i class="fa-solid fa-wand-magic-sparkles"></i> Matchday Flyer Studio</h3>
+              <p class="section-sub">Design high-impact visual match posters & roster sheets for WhatsApp stories & status.</p>
+
+              <div class="form-group">
+                <label>Flyer Design Theme:</label>
+                <select id="flyerThemeSelect" class="form-select">
+                  <option value="emerald-gold">⚡ Emerald Green & Gold Luxury (Chattal Official)</option>
+                  <option value="midnight-blue">🔥 Midnight Champion Dark</option>
+                  <option value="crimson-fire">🔴 Matchday Fire Red</option>
+                  <option value="classic-clean">⚪ Clean White & Emerald</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label>Flyer Type:</label>
+                <select id="flyerTypeSelect" class="form-select">
+                  <option value="matchday">⚽ Matchday Fixture Poster</option>
+                  <option value="squad-sheet">📋 Official Squad Roster Flyer</option>
+                  <option value="result-card">🏆 Match Result Graphic</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label>Custom Tournament / Match Sub-heading:</label>
+                <input type="text" id="flyerSubheading" value="VILLAGE SUPER DERBY • CLASH OF CHAMPIONS" class="form-control">
+              </div>
+
+              <div class="form-group">
+                <label>Opponent Club Name:</label>
+                <input type="text" id="flyerOpponentName" value="TARING FOOTBALL CLUB" class="form-control">
+              </div>
+
+              <div class="form-row-2">
+                <div class="form-group">
+                  <label>Date & Time:</label>
+                  <input type="text" id="flyerDateTime" value="Sunday, 12 Oct • 4:30 PM" class="form-control">
+                </div>
+                <div class="form-group">
+                  <label>Ground / Stadium:</label>
+                  <input type="text" id="flyerGround" value="Chattal Main Sports Ground" class="form-control">
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>Special Matchday Tagline:</label>
+                <input type="text" id="flyerTagline" value="COME SUPPORT OUR VILLAGE BOYS! • ENTRY FREE" class="form-control">
+              </div>
+
+              <div class="flyer-download-actions">
+                <button class="btn btn-primary btn-block" id="btnDownloadFlyerPNG">
+                  <i class="fa-solid fa-download"></i> Download Poster as Image (PNG)
+                </button>
+                <button class="btn btn-whatsapp btn-block" id="btnShareFlyerWhatsapp">
+                  <i class="fa-brands fa-whatsapp"></i> Share Announcement to WhatsApp
+                </button>
+              </div>
+            </div>
+
+            <!-- Right Side: Live High-Def Visual Canvas Flyer -->
+            <div class="flyer-canvas-card">
+              <div class="canvas-wrapper">
+                <!-- The exportable visual container -->
+                <div class="match-flyer-poster theme-emerald-gold" id="flyerVisualContainer">
+                  <!-- Header Crests & Stars -->
+                  <div class="flyer-header">
+                    <div class="flyer-star-bar">★ ★ ★ CHATTAL VILLAGE FOOTBALL ASSOCIATION ★ ★ ★</div>
+                    <div class="flyer-badge-sub" id="flyerPosterSubheading">VILLAGE SUPER DERBY • CLASH OF CHAMPIONS</div>
+                  </div>
+
+                  <!-- Faceoff Section -->
+                  <div class="flyer-faceoff">
+                    <div class="flyer-team team-home">
+                      <div class="flyer-crest home-crest">
+                        <i class="fa-solid fa-futbol"></i>
+                        <span>CFC</span>
+                      </div>
+                      <h2 class="flyer-team-name" id="flyerHomeName">CHATTAL FC</h2>
+                      <span class="flyer-badge-home">HOME TEAM</span>
+                    </div>
+
+                    <div class="flyer-vs-badge">
+                      <span class="vs-big">VS</span>
+                      <span class="vs-matchday">MATCHDAY</span>
+                    </div>
+
+                    <div class="flyer-team team-away">
+                      <div class="flyer-crest away-crest">
+                        <i class="fa-solid fa-shield"></i>
+                        <span id="flyerAwayInitials">TFC</span>
+                      </div>
+                      <h2 class="flyer-team-name" id="flyerAwayName">TARING FC</h2>
+                      <span class="flyer-badge-away">VISITORS</span>
+                    </div>
+                  </div>
+
+                  <!-- Details Pill Box -->
+                  <div class="flyer-details-card">
+                    <div class="fd-item">
+                      <i class="fa-regular fa-calendar-check"></i>
+                      <div class="fd-text">
+                        <span class="fd-label">DATE & TIME</span>
+                        <strong id="flyerDispDateTime">Sunday, 12 Oct • 4:30 PM</strong>
+                      </div>
+                    </div>
+                    <div class="fd-divider"></div>
+                    <div class="fd-item">
+                      <i class="fa-solid fa-location-dot"></i>
+                      <div class="fd-text">
+                        <span class="fd-label">VENUE / GROUND</span>
+                        <strong id="flyerDispGround">Chattal Main Sports Ground</strong>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Squad Highlights / Key Players Row -->
+                  <div class="flyer-key-squad" id="flyerSquadPreviewRow">
+                    <div class="fks-title">CHATTAL FC SELECTED SQUAD:</div>
+                    <div class="fks-players" id="flyerSquadListNames">
+                      Ali Raza (C) • Usman (GK) • Hamza • Bilal • Farhan • Daniyal • Saad • Zeeshan • Kamran • Shahzaib • Zain
+                    </div>
+                  </div>
+
+                  <!-- Footer Banner -->
+                  <div class="flyer-footer">
+                    <span class="flyer-tag" id="flyerDispTagline">COME SUPPORT OUR VILLAGE BOYS! • ENTRY FREE</span>
+                    <div class="flyer-powered">Official Chattal FC Matchday Hub</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- TAB 7: PUBLIC PLAYER SELF-ENTRY PORTAL -->
+        <!-- ========================================== -->
+        <section class="tab-pane" id="pane-registration">
+          <div class="registration-portal-wrapper">
+            <!-- Header for players -->
+            <div class="reg-hero">
+              <div class="reg-crest-badge">
+                <i class="fa-solid fa-futbol"></i>
+              </div>
+              <h2 class="reg-title">Chattal Football Club — Player Registration</h2>
+              <p class="reg-subtitle">Join the official village squad. Fill out your details and submit your monthly membership entry online.</p>
+            </div>
+
+            <div class="reg-grid">
+              <!-- Left Column: Registration Form -->
+              <div class="reg-form-card">
+                <h3><i class="fa-solid fa-user-pen"></i> New Player Registration Form</h3>
+                
+                <form id="publicRegistrationForm" onsubmit="app.handlePublicRegistration(event)">
+                  <div class="form-row-2">
+                    <div class="form-group">
+                      <label>Player Full Name <span class="required">*</span></label>
+                      <input type="text" id="regPlayerName" required placeholder="e.g. Ali Raza" class="form-control">
+                    </div>
+                    <div class="form-group">
+                      <label>Father's Name / Village Area</label>
+                      <input type="text" id="regFatherName" placeholder="e.g. Chattal Main / Mohalla" class="form-control">
+                    </div>
+                  </div>
+
+                  <div class="form-row-2">
+                    <div class="form-group">
+                      <label>WhatsApp Number <span class="required">*</span></label>
+                      <input type="tel" id="regPhone" required placeholder="e.g. 03001234567" class="form-control">
+                      <span class="form-hint">Used for match alerts & WhatsApp group</span>
+                    </div>
+                    <div class="form-group">
+                      <label>Primary Playing Position <span class="required">*</span></label>
+                      <select id="regPosition" required class="form-select">
+                        <option value="">Select Position...</option>
+                        <option value="GK">Goalkeeper (GK)</option>
+                        <option value="DEF">Defender (CB / LB / RB)</option>
+                        <option value="MID">Midfielder (CM / CAM / CDM)</option>
+                        <option value="FWD">Forward / Striker (ST / LW / RW)</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="form-row-2">
+                    <div class="form-group">
+                      <label>Preferred Jersey Number</label>
+                      <input type="number" id="regJerseyNumber" min="1" max="99" placeholder="e.g. 10" class="form-control">
+                    </div>
+                    <div class="form-group">
+                      <label>Preferred Playing Foot</label>
+                      <select id="regFoot" class="form-select">
+                        <option value="Right">Right Foot</option>
+                        <option value="Left">Left Foot</option>
+                        <option value="Both">Both Feet (Ambidextrous)</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <!-- Fee Payment Section -->
+                  <div class="reg-fee-section">
+                    <div class="rfs-header">
+                      <h4><i class="fa-solid fa-wallet"></i> Monthly Membership Fee Entry (PKR)</h4>
+                      <span class="fee-tag-pill">Standard Fee: Rs. <span id="regFeeAmountDisplay">500</span></span>
+                    </div>
+
+                    <div class="form-group">
+                      <label>Payment Method Used <span class="required">*</span></label>
+                      <select id="regPaymentMethod" required class="form-select">
+                        <option value="JazzCash">⚡ JazzCash Online Transfer</option>
+                        <option value="EasyPaisa">📱 EasyPaisa Online Transfer</option>
+                        <option value="Bank">🏛️ Bank Account Transfer</option>
+                        <option value="Cash">💵 Cash to Club Admin / Treasurer</option>
+                      </select>
+                    </div>
+
+                    <div class="form-group" id="regTrxGroup">
+                      <label>Transaction ID / Reference Number (If Paid Online)</label>
+                      <input type="text" id="regTrxId" placeholder="e.g. TID: 104829103 or Sender Mobile #" class="form-control">
+                      <span class="form-hint">Paste the TID from your JazzCash / EasyPaisa SMS for instant verification</span>
+                    </div>
+                  </div>
+
+                  <button type="submit" class="btn btn-primary btn-block btn-lg" id="btnSubmitRegistration">
+                    <i class="fa-solid fa-paper-plane"></i> Submit Registration & Entry
+                  </button>
+                </form>
+              </div>
+
+              <!-- Right Column: Official Payment Details Instructions -->
+              <div class="reg-instructions-card">
+                <h3><i class="fa-solid fa-circle-info"></i> How to Send Your Fee Online</h3>
+                <p>Transfer your membership fee directly via JazzCash, EasyPaisa, or Bank Account before or after submitting this form:</p>
+
+                <!-- JazzCash Card -->
+                <div class="account-instruction-box jc-box">
+                  <div class="aib-head">
+                    <div class="aib-logo"><i class="fa-solid fa-bolt"></i> JazzCash Account</div>
+                    <button class="btn-copy-sm" onclick="app.copyPaymentDetails('JazzCash')"><i class="fa-regular fa-copy"></i> Copy</button>
+                  </div>
+                  <div class="aib-row">
+                    <span class="aib-label">Account Title:</span>
+                    <strong class="aib-val" id="regInfoJcTitle">Chattal FC Official</strong>
+                  </div>
+                  <div class="aib-row">
+                    <span class="aib-label">Account / Mobile Number:</span>
+                    <strong class="aib-val text-accent" id="regInfoJcNumber">0300-1234567</strong>
+                  </div>
+                </div>
+
+                <!-- EasyPaisa Card -->
+                <div class="account-instruction-box ep-box">
+                  <div class="aib-head">
+                    <div class="aib-logo"><i class="fa-solid fa-mobile-retro"></i> EasyPaisa Account</div>
+                    <button class="btn-copy-sm" onclick="app.copyPaymentDetails('EasyPaisa')"><i class="fa-regular fa-copy"></i> Copy</button>
+                  </div>
+                  <div class="aib-row">
+                    <span class="aib-label">Account Title:</span>
+                    <strong class="aib-val" id="regInfoEpTitle">Chattal FC Treasurer</strong>
+                  </div>
+                  <div class="aib-row">
+                    <span class="aib-label">Account / Mobile Number:</span>
+                    <strong class="aib-val text-accent" id="regInfoEpNumber">0345-7654321</strong>
+                  </div>
+                </div>
+
+                <!-- Bank Card -->
+                <div class="account-instruction-box bank-box">
+                  <div class="aib-head">
+                    <div class="aib-logo"><i class="fa-solid fa-building-columns"></i> Bank Account</div>
+                    <button class="btn-copy-sm" onclick="app.copyPaymentDetails('Bank')"><i class="fa-regular fa-copy"></i> Copy</button>
+                  </div>
+                  <div class="aib-row">
+                    <span class="aib-label">Bank Name:</span>
+                    <strong class="aib-val" id="regInfoBankName">Habib Bank Ltd (HBL)</strong>
+                  </div>
+                  <div class="aib-row">
+                    <span class="aib-label">Account Title:</span>
+                    <strong class="aib-val" id="regInfoBankTitle">Chattal Sports Club</strong>
+                  </div>
+                  <div class="aib-row">
+                    <span class="aib-label">IBAN / Account #:</span>
+                    <strong class="aib-val text-accent" id="regInfoBankIban">PK00 HABB 0001 2345 6789 01</strong>
+                  </div>
+                </div>
+
+                <div class="help-box">
+                  <i class="fa-brands fa-whatsapp text-whatsapp"></i>
+                  <span>Need help? Contact Club Admin directly on WhatsApp: <strong>0300-1234567</strong></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- TAB 8: CLUB SETTINGS & BACKUP -->
+        <!-- ========================================== -->
+        <section class="tab-pane" id="pane-settings">
+          <div class="settings-grid">
+            <!-- Club Info Settings -->
+            <div class="settings-card">
+              <h3><i class="fa-solid fa-shield-halved"></i> Club Profile & Identity</h3>
+              <div class="form-group">
+                <label>Club Name:</label>
+                <input type="text" id="setClubName" value="Chattal Football Club" class="form-control">
+              </div>
+              <div class="form-group">
+                <label>Club Tagline / Motto:</label>
+                <input type="text" id="setClubMotto" value="Pride of Chattal Village • Established 2024" class="form-control">
+              </div>
+              <div class="form-group">
+                <label>Home Ground Name:</label>
+                <input type="text" id="setHomeGround" value="Chattal Main Sports Ground" class="form-control">
+              </div>
+              <div class="form-row-2">
+                <div class="form-group">
+                  <label>Default Monthly Fee (PKR):</label>
+                  <input type="number" id="setDefaultFeeAmount" value="500" class="form-control">
+                </div>
+                <div class="form-group">
+                  <label>Club WhatsApp Group Name:</label>
+                  <input type="text" id="setWhatsappGroupName" value="Chattal FC Official Group" class="form-control">
+                </div>
+              </div>
+              <button class="btn btn-primary" onclick="app.saveClubProfileSettings()">
+                <i class="fa-solid fa-floppy-disk"></i> Save Club Settings
+              </button>
+            </div>
+
+            <!-- Payment Accounts Settings -->
+            <div class="settings-card">
+              <h3><i class="fa-solid fa-credit-card"></i> Online Payment Accounts (JazzCash / EasyPaisa / Bank)</h3>
+              <p class="section-sub">These accounts are shown on the registration page and fee reminders for players to pay online.</p>
+
+              <!-- JazzCash Config -->
+              <div class="sub-config-block">
+                <h5><i class="fa-solid fa-bolt text-warning"></i> JazzCash Account</h5>
+                <div class="form-row-2">
+                  <div class="form-group">
+                    <label>Account Title:</label>
+                    <input type="text" id="setJcTitle" value="Chattal FC Official" class="form-control">
+                  </div>
+                  <div class="form-group">
+                    <label>JazzCash Mobile Number:</label>
+                    <input type="text" id="setJcNumber" value="0300-1234567" class="form-control">
+                  </div>
+                </div>
+              </div>
+
+              <!-- EasyPaisa Config -->
+              <div class="sub-config-block">
+                <h5><i class="fa-solid fa-mobile-retro text-success"></i> EasyPaisa Account</h5>
+                <div class="form-row-2">
+                  <div class="form-group">
+                    <label>Account Title:</label>
+                    <input type="text" id="setEpTitle" value="Chattal FC Treasurer" class="form-control">
+                  </div>
+                  <div class="form-group">
+                    <label>EasyPaisa Mobile Number:</label>
+                    <input type="text" id="setEpNumber" value="0345-7654321" class="form-control">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Bank Config -->
+              <div class="sub-config-block">
+                <h5><i class="fa-solid fa-building-columns text-info"></i> Bank Transfer Account</h5>
+                <div class="form-row-3">
+                  <div class="form-group">
+                    <label>Bank Name:</label>
+                    <input type="text" id="setBankName" value="Habib Bank Ltd (HBL)" class="form-control">
+                  </div>
+                  <div class="form-group">
+                    <label>Account Title:</label>
+                    <input type="text" id="setBankTitle" value="Chattal Sports Club" class="form-control">
+                  </div>
+                  <div class="form-group">
+                    <label>IBAN / Account Number:</label>
+                    <input type="text" id="setBankIban" value="PK00 HABB 0001 2345 6789 01" class="form-control">
+                  </div>
+                </div>
+              </div>
+
+              <button class="btn btn-primary" onclick="app.savePaymentAccountSettings()">
+                <i class="fa-solid fa-floppy-disk"></i> Save Payment Accounts
+              </button>
+            </div>
+
+            <!-- Data Backup & Reset -->
+            <div class="settings-card full-width">
+              <h3><i class="fa-solid fa-database"></i> Data Backup, Restore & Demo Data</h3>
+              <p class="section-sub">Your data is safely stored in this browser (localStorage). Export a backup file to keep your club records 100% safe.</p>
+
+              <div class="backup-actions-row">
+                <button class="btn btn-outline-light" onclick="app.exportBackupJSON()">
+                  <i class="fa-solid fa-file-export"></i> Download Full Backup (.json)
+                </button>
+                
+                <label class="btn btn-outline-light file-upload-btn">
+                  <i class="fa-solid fa-file-import"></i> Restore from Backup File
+                  <input type="file" id="importBackupInput" accept=".json" onchange="app.importBackupJSON(event)" style="display:none;">
+                </label>
+
+                <button class="btn btn-outline-warning" onclick="app.loadSampleDataConfirm()">
+                  <i class="fa-solid fa-wand-magic-sparkles"></i> Load Chattal FC Sample Squad & Records
+                </button>
+
+                <button class="btn btn-outline-danger" onclick="app.resetDataConfirm()">
+                  <i class="fa-solid fa-trash-can"></i> Clear All Club Data
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL: ADD / EDIT PLAYER -->
+  <!-- ========================================== -->
+  <div class="modal-overlay" id="playerModal" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 id="playerModalTitle"><i class="fa-solid fa-user-plus"></i> Add New Player</h3>
+        <button class="modal-close-btn" onclick="app.closeModal('playerModal')">&times;</button>
+      </div>
+      <form id="playerForm" onsubmit="app.handleSavePlayer(event)">
+        <input type="hidden" id="modalPlayerId">
+        <div class="modal-body">
+          <div class="form-row-2">
+            <div class="form-group">
+              <label>Full Name <span class="required">*</span></label>
+              <input type="text" id="modalPlayerName" required placeholder="e.g. Hamza Tariq" class="form-control">
+            </div>
+            <div class="form-group">
+              <label>WhatsApp / Mobile Number <span class="required">*</span></label>
+              <input type="tel" id="modalPlayerPhone" required placeholder="e.g. 0301-2345678" class="form-control">
+            </div>
+          </div>
+
+          <div class="form-row-3">
+            <div class="form-group">
+              <label>Playing Position <span class="required">*</span></label>
+              <select id="modalPlayerPosition" required class="form-select">
+                <option value="GK">Goalkeeper (GK)</option>
+                <option value="DEF">Defender (DEF)</option>
+                <option value="MID">Midfielder (MID)</option>
+                <option value="FWD">Forward (FWD)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Jersey Number</label>
+              <input type="number" id="modalPlayerJersey" min="1" max="99" placeholder="e.g. 7" class="form-control">
+            </div>
+            <div class="form-group">
+              <label>Club Role</label>
+              <select id="modalPlayerRole" class="form-select">
+                <option value="Player">Regular Player</option>
+                <option value="Captain">Team Captain (C)</option>
+                <option value="Vice-Captain">Vice-Captain (VC)</option>
+                <option value="Manager">Manager / Coach</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row-2">
+            <div class="form-group">
+              <label>Player Status</label>
+              <select id="modalPlayerStatus" class="form-select">
+                <option value="Active">Active Squad Member</option>
+                <option value="Substitute">Substitute / Bench</option>
+                <option value="Injured">Injured / On Leave</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Monthly Fee Status</label>
+              <select id="modalPlayerFeeStatus" class="form-select">
+                <option value="PAID">Paid (Rs. 500)</option>
+                <option value="UNPAID">Unpaid / Pending</option>
+                <option value="PENDING">Pending Verification</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Payment Method & Trx Reference (Optional):</label>
+            <input type="text" id="modalPlayerTrx" placeholder="e.g. JazzCash TID 9182371 or Cash" class="form-control">
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-light" onclick="app.closeModal('playerModal')">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="btnSavePlayerSubmit">Save Player</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL: RECORD / VERIFY PAYMENT -->
+  <!-- ========================================== -->
+  <div class="modal-overlay" id="paymentModal" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-receipt"></i> Record / Verify Player Payment</h3>
+        <button class="modal-close-btn" onclick="app.closeModal('paymentModal')">&times;</button>
+      </div>
+      <form id="paymentRecordForm" onsubmit="app.handleSavePaymentRecord(event)">
+        <input type="hidden" id="payModalPlayerId">
+        <div class="modal-body">
+          <div class="payment-player-highlight" id="payModalPlayerSummary">
+            <!-- Player name & status injected -->
+          </div>
+
+          <div class="form-row-2">
+            <div class="form-group">
+              <label>Fee Month:</label>
+              <input type="text" id="payModalMonth" value="October 2026" class="form-control" readonly>
+            </div>
+            <div class="form-group">
+              <label>Amount Paid (PKR):</label>
+              <input type="number" id="payModalAmount" value="500" required class="form-control">
+            </div>
+          </div>
+
+          <div class="form-row-2">
+            <div class="form-group">
+              <label>Payment Method:</label>
+              <select id="payModalMethod" class="form-select">
+                <option value="JazzCash">⚡ JazzCash</option>
+                <option value="EasyPaisa">📱 EasyPaisa</option>
+                <option value="Bank">🏛️ Bank Account</option>
+                <option value="Cash">💵 Cash</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Payment Status:</label>
+              <select id="payModalStatus" class="form-select">
+                <option value="PAID">Paid (Verified 🟢)</option>
+                <option value="UNPAID">Unpaid (Pending 🔴)</option>
+                <option value="PENDING">Under Verification (🟡)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Transaction ID / Reference Number:</label>
+            <input type="text" id="payModalTrxId" placeholder="e.g. TID: 104829103 or Cash Receipt #" class="form-control">
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-light" onclick="app.closeModal('paymentModal')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Update Payment Record</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Application Logic Scripts -->
+  <script src="js/app.js"></script>
+</body>
+</html>
